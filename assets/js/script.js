@@ -243,7 +243,7 @@ var deleteTask = function (taskId) {
     var updatedTaskArr = [];
 
     // loop through current tasks
-    for (var i =0; i < tasks.length; i++) {
+    for (var i = 0; i < tasks.length; i++) {
         // if tasks[i].id doesn't match value of taskId, keep task and push into new array
         // check if current task in loop does NOT have same id value as task we want to delete
         if (tasks[i].id !== parseInt(taskId)) {
@@ -258,9 +258,53 @@ var deleteTask = function (taskId) {
 
 // saves data to localStorage
 // JSON.stringify turns objects into string in localStorage
-var saveTasks = function() {
+var saveTasks = function () {
     localStorage.setItem("tasks", JSON.stringify(tasks));
-}
+};
+
+// 1. get task items from localStorage
+// 2. convert tasks from string back to array of objects
+// 3. iterate through tasks array and create task elements on page from it
+var loadTasks = function () {
+    tasks = localStorage.getItem("tasks", JSON.stringify(tasks));
+    console.log(loadTasks);
+
+    // make tasks from localStorage into array of objects
+    // JSON.parse takes string--> array of objects
+    tasks = JSON.parse(tasks);
+    console.log(tasks);
+
+    for (var i = 0; i < tasks.length; i++) {
+        task[i].id = taskIdCounter;
+        console.log(tasks[i]);
+
+        var listItemEl = document.createElement("li");
+        listItemEl.className = "task-item";
+        listItemEl.setAttribute("data-task-id", tasks[i].id);
+        console.log(listItemEl);
+
+        var taskInfoEl = document.createElement("div");
+        taskInfoEl.className = "task-info";
+        taskInfoEl.innerHTML = "<h3 class='task-name'>" + tasks[i].name + "</h3><span class='task-type'>" + tasks[i].type + "</span>";
+        listItemEl.appendChild(taskInfoEl);
+
+        var taskActionsEl = createTaskActions(tasks[i].id);
+        listItemEl.appendChild(taskActionsEl);
+        console.log(listItemEl);
+
+        if (tasks[i].status === "to do") {
+            listItemEl.querySelector("select[name='status-change']").selectedIndex = 0;
+            tasksToDoEl.appendChild(listItemEl);
+        } else if (tasks[i].status === "complete") {
+            listItemEl.querySelector("select[name='status-change']").selectedIndex = 2;
+            tasksCompletedEl.appendChild(listItemEl);
+        }
+        taskIdCounter++;
+        console.log(listItemEl);
+    }
+};
+
+
 
 // from-specific event, submit(onsubmit)
 // type="submit" in button, when user presses Enter
